@@ -1,7 +1,11 @@
 const { Client, Intents, MessageEmbed } = require('discord.js');
-const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
+const fs = require('fs');
 
-const description = 'A reaction to showcase deez nuts.';
+// Read configuration from JSON file
+const rawData = fs.readFileSync('config.json');
+const config = JSON.parse(rawData);
+
+const client = new Client({ intents: [Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS] });
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -10,7 +14,7 @@ client.on('ready', () => {
 client.on('messageReactionAdd', async (reaction, user) => {
   if (reaction.emoji.name === '💀' && reaction.count === 6) {
     const guild = client.guilds.cache.get('1129928861736509571');
-    const schannel = guild.channels.cache.get('1174819165987680256');
+    const schannel = guild.channels.cache.get(config.channelId);
 
     const embed = new MessageEmbed()
       .setColor('#14706066')
@@ -36,4 +40,4 @@ client.on('message', async message => {
   }
 });
 
-client.login(process.env.TOKEN);
+client.login(config.token);
